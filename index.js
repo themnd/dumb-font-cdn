@@ -7,23 +7,38 @@ $(document).ready(function() {
   var x = 0;
   var y = 30;
   var fontSize = '24';
+  
+  var fontUrls = {
+    'regular': 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-regular-webfont.ttf',
+    'bold': 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-bold-webfont.ttf',
+    'italic': 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-italic-webfont.ttf',
+    'bolditalic': 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-bolditalic-webfont.ttf'
+  };
 
+  
   var fontMap = {};
 
   function getFontUrl() {
-    var robotoUrl = 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto_condensed/robotocondensed-light-webfont.ttf';
-    var robotoBoldUrl = 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-bold-webfont.ttf';
     
-    if (($('#btnBold').is(':checked'))) {
-      return robotoBoldUrl;
-    } else {
-      return robotoUrl;
+    var fontType = '';
+    var isBold = $('#btnBold').is(':checked');
+    var isItalic = $('#btnItalic').is(':checked');
+    if (isBold) {
+      fontType = 'bold';
     }
-
-    return robotoUrl;
+    if (isItalic) {
+      fontType += 'italic';
+    }
+    if (fontType === '') {
+      fontType = 'regular';
+    }
+    return fontUrls[fontType];
   }
 
   $('#btnBold').change(function() {
+    drawText(text);
+  });
+  $('#btnItalic').change(function() {
     drawText(text);
   });
 
