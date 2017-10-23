@@ -66,15 +66,18 @@ $(document).ready(function() {
 
   drawText(text);
 
-  $(window).keypress(function(e) {
+  $(window).on('keypress', function(e) {
+    e.preventDefault();
     //var bbox = previousPath.getBoundingBox();
     //ctx.clearRect(bbox.x1 - 1, bbox.y1 - 1, bbox.x2 + 1, bbox.y2 + 1);
-    if (String.fromCharCode(e.keyCode) == 'p') {
-      text = text.substring(0, text.length - 1);
-    } else {
-      text = text + String.fromCharCode(e.keyCode);
-    }
+    text = text + String.fromCharCode(e.which);
     drawText(text);
     return false;
+  }).on('keydown', function(e) {
+    // allow backspace
+    if (e.which == 8) {
+      text = text.substring(0, text.length - 1);
+      drawText(text);
+    }
   });
 });
