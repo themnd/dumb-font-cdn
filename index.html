@@ -1,18 +1,36 @@
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>
-    <script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="index.js"></script>
   </head>
   <body>
-    <div id="canvasWrapper" style="border:1px solid;   width:420px; height:277px;">
-      <svg id="s" width="420" height="277">
+
+    <!-- <div id="canvasWrapper" style="border:1px solid;   width:420px; height:200px;">
+      <svg id="s" width="420" height="200">
       </svg>
-      <!--
+      < ! - -
       <canvas id="c" width="420" height="277"></canvas>
-      -->
+      - -  >
+    </div> -->
+    <p>
+        <input type="checkbox" id="btnBold">Bold
+        <input type="checkbox" id="btnItalic">Italic
+      </p>
+      <p>
+        Rotate: <input type="range" id="rotate" name="rotate" min="0" max="180" value="0"><br>
+        Strech: <input type="range" id="stretch" min="0" max="100" value="100" step="0.01"><br>
+      </p>
+      <p>
+        <input type="text" id="text" size="30" value="">
+      </p>
+    <div id="canvasWrapper2" style="border:1px solid;   width:420px; height:200px;" class="ui-widget-content">
+      <svg width="420" height="200">
+        <g id="s2" transform="translate(-30, 10) rotate(45 50 50)"></g>
+      </svg>
     </div>
-    <input type="checkbox" id="btnBold">Bold
-    <input type="checkbox" id="btnItalic">Italic
   </body>
 </html>
