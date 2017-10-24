@@ -8,15 +8,31 @@ $(document).ready(function() {
   var y = 30;
   var fontSize = '24';
   var useKerning = true;
+  var githubCDN = 'https://cdn.rawgit.com/themnd/dumb-font-cdn';
+  var branch = 'master';
+  var cdnPrefix = githubCDN + '/' + branch;
   
   var fontUrls = {
-    'regular': 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-regular-webfont.ttf',
-    'bold': 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-bold-webfont.ttf',
-    'italic': 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-italic-webfont.ttf',
-    'bolditalic': 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-bolditalic-webfont.ttf'
+    'Roboto': {
+      'regular': 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-regular-webfont.ttf',
+      'bold': 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-bold-webfont.ttf',
+      'italic': 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-italic-webfont.ttf',
+      'bolditalic': 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-bolditalic-webfont.ttf'
+    },
+    'Times New Roman': {
+      'regular': cdnPrefix + '/fonts/Times%20New%20Roman.ttf',
+      'bold': cdnPrefix + '/fonts/Times%20New%20Roman%20Bold.ttf',
+      'italic': cdnPrefix + '/fonts/Times%20New%20Roman%20Italic.ttf',
+      'bolditalic': cdnPrefix + '/fonts/Times%20New%20Roman%20Bold%20Italic.ttf'
+    },
+    'Georgia': {
+      'regular': cdnPrefix + '/fonts/Georgia.ttf',
+      'bold': cdnPrefix + '/fonts/Georgia%20Bold.ttf',
+      'italic': cdnPrefix + '/fonts/Georgia%20Italic.ttf',
+      'bolditalic': cdnPrefix + '/fonts/Georgia%20Bold%20Italic.ttf'
+    },
   };
 
-  
   var fontMap = {};
 
   function getFontUrl() {
@@ -33,7 +49,8 @@ $(document).ready(function() {
     if (fontType === '') {
       fontType = 'regular';
     }
-    return fontUrls[fontType];
+    var selected = $('#fontSelect').val();
+    return fontUrls[selected][fontType];
   }
 
   $('#btnBold').change(function() {
@@ -43,6 +60,10 @@ $(document).ready(function() {
     drawText(text);
   });
   $('#rotate').change(function() {
+    drawText(text);
+  });
+
+  $('#fontSelect').change(function() {
     drawText(text);
   });
 
