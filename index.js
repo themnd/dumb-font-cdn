@@ -6,7 +6,7 @@ $(document).ready(function() {
   var text = 'Hello World';
   var x = 0;
   var y = 30;
-  var fontSize = '24';
+  var cursorPosition = text.length;
   var useKerning = true;
   var githubCDN = 'https://cdn.rawgit.com/themnd/dumb-font-cdn';
   var branch = 'master';
@@ -71,11 +71,22 @@ $(document).ready(function() {
 
   var previousPath;
 
+  function getFontSize() {
+    return $('#fontSize').val();
+  }
+
   function drawTextWithFontGlyphs(font, text, maxWidth) {
     var glyphs = font.stringToGlyphs(text);
     //console.log(glyphs);
 
-    var fontSize = $('#fontSize').val();
+    var fontSize = getFontSize();
+
+    var cursorPos = {
+      x: 0,
+      y: 0,
+      w: 0,
+      h: 0
+    };
 
     var path = null;
     var fontPx = font.unitsPerEm / fontSize;
@@ -107,6 +118,7 @@ $(document).ready(function() {
       var data = {};
       data.idx = idx;
       data.w = glyphs[idx].advanceWidth;
+      data.h = font.unitsPerEm;
       var kern = (idx > 0 ? font.getKerningValue(glyphs[idx - 1], glyphs[idx]) : 0);
       data.kern = kern;
       if (useKerning) {
@@ -152,6 +164,12 @@ $(document).ready(function() {
     for (var idx = 0; idx < len; idx++) {
       var data = drawData[idx];
       var curPath = glyphs[idx].getPath(data.x, data.y, fontSize);
+      if (cursorPosition == idx) {
+        cursorPos.x = data.x;
+        cursorPos.y = data.y;
+        cursorPos.w = data.w / fontPx;
+        cursorPos.h = data.h / fontPx;
+      }
       if (path == null) {
        path = curPath;
       } else {
@@ -159,6 +177,16 @@ $(document).ready(function() {
           path.commands.push(curPath.commands[i]);
         }
       }
+    }
+
+    var realEndWith = (compressX ? maxWidth * (100 / compressX / 100) : maxWidth);
+
+    if (cursorPosition >= len && len > 0) {
+      var data = drawData[len - 1];
+      cursorPos.x = realEndWith;
+      cursorPos.y = data.y;
+      cursorPos.w = data.w / fontPx;
+      cursorPos.h = data.h / fontPx;    
     }
 
     if (len > 0) {
@@ -175,13 +203,39 @@ $(document).ready(function() {
       }
       var translate = 'translate(' + tx + ',' + ty + ') ';
       if (r != 0) {
-        $('#s2').attr('transform', translate + ' rotate(' + r + ' 50 50)' + scale);
+        $('#all').attr('transform', translate + ' rotate(' + r + ' 50 50)' + scale);
       } else {
-        $('#s2').attr('transform', translate + scale);
+        $('#all').attr('transform', translate + scale);
       }
     } else {
       $('#s2').html('');
     }
+
+    var curStyle = 'style="fill:blue;stroke:pink;stroke-width:1;stroke-opacity:0.9"';
+    var curSvg = '';
+    if (cursorPos.w) {
+      var curX = cursorPos.x - 5;
+      if (curX < 0) {
+        curX = 0;
+      }
+      if (curX > (realEndWith - 5)) {
+        curX = realEndWith - 5;
+      }
+      var curY = cursorPos.y - cursorPos.h;
+      var curW = cursorPos.w;
+      var curH = cursorPos.h;
+      curW = 2;
+      curH = fontSize;
+      curSvg = '<rect x="' + curX + '" y="' + curY + '" width="' + curW + '" height="' + curH + '" ' + curStyle + '>';
+    } else {
+      var curX = 0;
+      var curH = fontSize;
+      var curY = y - curH;
+      var curW = 2;
+      curSvg = '<rect x="' + curX + '" y="' + curY + '" width="' + curW + '" height="' + curH + '" ' + curStyle + '>';
+    }
+    curSvg += '<animate attributeType="CSS" attributeName="opacity" from="1" to="0" dur="0.5s" repeatCount="indefinite" /></rect>'
+    $('#cursor').html(curSvg);
   }
 
   function drawTextWithFont(font, text) {
@@ -199,8 +253,10 @@ $(document).ready(function() {
     var svgPath = path.toSVG();
     $('#s').html(svgPath);
     */
+    var curHeight = $('#canvasWrapper2').height();
     var curWidth = $('#canvasWrapper2').width();
     $('#canvasWrapper2 svg').width(curWidth);
+    $('#canvasWrapper2 svg').height(curHeight);
     drawTextWithFontGlyphs(font, text, curWidth);
     //previousPath = path;
   }
@@ -230,13 +286,34 @@ $(document).ready(function() {
     e.preventDefault();
     //var bbox = previousPath.getBoundingBox();
     //ctx.clearRect(bbox.x1 - 1, bbox.y1 - 1, bbox.x2 + 1, bbox.y2 + 1);
-    text = text + String.fromCharCode(e.which);
+    var newChar = String.fromCharCode(e.which);
+    if (cursorPosition > 0) {
+      text = text.substring(0, cursorPosition) + newChar + text.substring(cursorPosition);
+    } else {
+      text = newChar + text;
+    }
+    cursorPosition += 1;
     drawText(text);
     return false;
   }).on('keydown', function(e) {
     // allow backspace
     if (e.which == 8) {
-      text = text.substring(0, text.length - 1);
+      if (cursorPosition > 0) {
+        text = text.substring(0, cursorPosition - 1) + text.substring(cursorPosition);
+        cursorPosition -= 1;
+      } else {
+        text = text.substring(cursorPosition + 1);
+      }
+      drawText(text);
+    } else if (e.which == 37) {
+      if (cursorPosition > 0) {
+        cursorPosition -= 1;
+      }
+      drawText(text);
+    } else if (e.which == 39) {
+      if (cursorPosition < text.length) {
+        cursorPosition += 1;
+      }
       drawText(text);
     }
   });
