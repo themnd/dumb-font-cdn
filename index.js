@@ -1,7 +1,7 @@
 $(document).ready(function() {
   var DOMURL = window.URL || window.webkitURL || window;
 
-  var c = document.getElementById("c");
+  //var c = document.getElementById("c");
   //var ctx = c.getContext("2d");
   var text = 'Hello World';
   var x = 0;
@@ -62,8 +62,10 @@ $(document).ready(function() {
   $('#rotate').change(function() {
     drawText(text);
   });
-
   $('#fontSelect').change(function() {
+    drawText(text);
+  });
+  $('#fontSize').change(function() {
     drawText(text);
   });
 
@@ -72,6 +74,8 @@ $(document).ready(function() {
   function drawTextWithFontGlyphs(font, text, maxWidth) {
     var glyphs = font.stringToGlyphs(text);
     //console.log(glyphs);
+
+    var fontSize = $('#fontSize').val();
 
     var path = null;
     var fontPx = font.unitsPerEm / fontSize;
